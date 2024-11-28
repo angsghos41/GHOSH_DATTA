@@ -14,30 +14,41 @@ int main() {
     write(STDOUT_FILENO, welcome_message, strlen(welcome_message));
 
     char buffer[BUFFER_SIZE];
- while (1) {
-        // Clear the screen before displaying the prompt
-        system("clear");  // For Linux/macOS. Use "cls" for Windows.
 
+    while (1) {
+        // Clear the screen before displaying the prompt
+        system("clear");
         // Display the prompt
         const char *prompt = "enseash % ";
         write(STDOUT_FILENO, prompt, strlen(prompt));
 
-        // Read user input
+        // Read user input (Ctrl+D triggers EOF, which returns -1)
         ssize_t bytes_read = read(STDIN_FILENO, buffer, BUFFER_SIZE - 1);
-        if (bytes_read <= 0) break;  // Exit if reading fails
-buffer[bytes_read - 1] = '\0';  // Null-terminate the string
 
-        // Exit condition
+        // If EOF (Ctrl+D) is pressed, exit the shell
+        if (bytes_read == 0) {
+ // Print the goodbye message for Ctrl+D
+            const char *bye_message = "Bye bye...\n";
+            write(STDOUT_FILENO, bye_message, strlen(bye_message));
+            break;  // Exit the loop
+        }
+
+        if (bytes_read <= 0) break;  // Exit if reading fails
+
+        buffer[bytes_read - 1] = '\0';  // Null-terminate the string
+
+// Exit condition when 'exit' is typed
         if (strcmp(buffer, "exit") == 0) {
             const char *bye_message = "Bye bye...\n";
             write(STDOUT_FILENO, bye_message, strlen(bye_message));
-            break;
+            break;  // Exit the loop
         }
 
         // Tokenize the input string
         char *args[100];
         char *token = strtok(buffer, " ");  // Split input by spaces
-  int i = 0;
+
+int i = 0;
         while (token != NULL) {
             args[i++] = token;  // Store tokens (command and arguments)
             token = strtok(NULL, " ");
