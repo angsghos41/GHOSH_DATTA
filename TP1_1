@@ -5,15 +5,15 @@
 #define BUFFER_SIZE 1024
 
 int main() {
-    // Display welcome message
+    // Welcome message to be displayed
     const char *welcome_message = "Welcome to ENSEA Tiny Shell.\nType 'exit' to quit.\n";
-    write(STDOUT_FILENO, welcome_message, strlen(welcome_message));
+    write(STDOUT_FILENO, welcome_message, strlen(welcome_message)); // writes data directly to file descriptor
     
-    // Command buffer
+    // Command buffer for storing user input data
     char buffer[BUFFER_SIZE];
 
     while (1) {
-        // Display prompt
+        // Display prompt to display continuously till 'exit' message is typed by user
         const char *prompt = "enseash % ";
         write(STDOUT_FILENO, prompt, strlen(prompt));
         
@@ -21,13 +21,11 @@ int main() {
         ssize_t bytes_read = read(STDIN_FILENO, buffer, BUFFER_SIZE - 1);
         if (bytes_read <= 0) break; // End loop if read fails
 
-        buffer[bytes_read - 1] = '\0'; // Null-terminate string
+        buffer[bytes_read - 1] = '\0'; // Null-terminate string so that the string ends without a new-line command
 
         // Exit condition
         if (strcmp(buffer, "exit") == 0) {
-            const char *bye_message = "Bye bye...\n";
-            write(STDOUT_FILENO, bye_message, strlen(bye_message));
-            break;
+                        break; // break when the "exit" word is read from the user input
         }
     }
 
